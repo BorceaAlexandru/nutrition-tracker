@@ -4,7 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -18,4 +18,38 @@ model User {
   email String @unique
   name String?
   createdAt DateTime @default(now())
+
+  //an user can have more recipes
+  recipes Recipe[]
+}
+
+model Recipe{
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  name String
+  instructions String?
+  portions Int @default(1)
+
+  //macros per portion
+  calories Float
+  protein Float
+  carbs Float
+  fat Float
+
+  //a recipe can have more than one ingredient
+  ingredients RecipeIngredient[]
+
+  createdAt DateTime @default(now())
+}
+
+model RecipeIngredient{
+  id String @id @default(cuid())
+  recipeId String
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  name String //ex: "chicken breast"
+  quantity Float //ex: 200
+  unit String //ex: "g/ml/buc"
 }
