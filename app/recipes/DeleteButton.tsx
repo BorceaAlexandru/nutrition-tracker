@@ -4,8 +4,8 @@ import { deleteRecipe } from "./actions";
 
 export default function DeleteButton({ recipeId }: { recipeId: string }) {
   const handleDelete = async () => {
-    // Îi cerem utilizatorului confirmarea înainte de a șterge
-    const isConfirmed = window.confirm("Ești sigur că vrei să ștergi această rețetă? Acțiunea este ireversibilă.");
+    //just to be sure
+    const isConfirmed = window.confirm("Are you sure?");
     
     if (isConfirmed) {
       await deleteRecipe(recipeId);
@@ -16,9 +16,9 @@ export default function DeleteButton({ recipeId }: { recipeId: string }) {
     <button 
       onClick={handleDelete}
       className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
-      title="Șterge rețeta"
+      title="Delete recipe"
     >
-      Șterge
+      Delete
     </button>
   );
 }

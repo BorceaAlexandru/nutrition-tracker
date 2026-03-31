@@ -7,10 +7,10 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 export async function createRecipe(formData: FormData) {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user?.email) throw new Error("Nu ești autorizat!");
+  if (!session || !session.user?.email) throw new Error("Not authorized!");
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) throw new Error("Utilizatorul nu a fost găsit.");
+  if (!user) throw new Error("User not found.");
 
   const name = formData.get("name") as string;
   const instructions = formData.get("instructions") as string;
@@ -20,11 +20,9 @@ export async function createRecipe(formData: FormData) {
   const carbs = parseFloat(formData.get("carbs") as string);
   const fat = parseFloat(formData.get("fat") as string);
 
-  // Extragem lista de ingrediente din câmpul ascuns și o transformăm înapoi în listă
   const ingredientsString = formData.get("ingredientsData") as string;
   const ingredientsList = JSON.parse(ingredientsString);
 
-  // Prisma va crea rețeta, va genera un ID pentru ea, și va lega automat ingredientele de ea!
   await prisma.recipe.create({
     data: {
       name: name,
@@ -47,26 +45,22 @@ export async function createRecipe(formData: FormData) {
   redirect("/recipes");
 }
 
-// Adaugă această funcție NOUĂ la finalul fișierului:
 export async function deleteRecipe(recipeId: string) {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user?.email) throw new Error("Neautorizat");
+  if (!session || !session.user?.email) throw new Error("Unauthorized");
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) throw new Error("Utilizator negăsit");
+  if (!user) throw new Error("Wrong user!");
 
-  // 1. Găsim rețeta ca să ne asigurăm că aparține acestui utilizator (securitate!)
   const recipe = await prisma.recipe.findUnique({ where: { id: recipeId } });
   
   if (!recipe || recipe.userId !== user.id) {
-    throw new Error("Nu poți șterge această rețetă!");
+    throw new Error("Can't delete this recipe!");
   }
 
-  // 2. Ștergem rețeta (Prisma va șterge automat și ingredientele datorită CASCADE)
   await prisma.recipe.delete({
     where: { id: recipeId }
   });
 
-  // 3. Spunem paginii de rețete să se reîncarce cu noile date
   revalidatePath("/recipes");
 }

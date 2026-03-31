@@ -14,13 +14,12 @@ export default async function Navbar() {
                NutriTrack
             </Link>
             
-            {/*showing links only if user is logged in*/}
             {session && (
               <div className="hidden md:flex space-x-6">
-                <Link href="/recipes" className="text-slate-600 hover:text-slate-900 font-medium">Rețete</Link>
+                <Link href="/recipes" className="text-slate-600 hover:text-slate-900 font-medium">Recipies</Link>
                 <Link href="/planner" className="text-slate-600 hover:text-slate-900 font-medium">Planner</Link>
                 <Link href="/journal" className="text-slate-600 hover:text-slate-900 font-medium">Jurnal</Link>
-                <Link href="/progress" className="text-slate-600 hover:text-slate-900 font-medium">Progres</Link>
+                <Link href="/progress" className="text-slate-600 hover:text-slate-900 font-medium">Progress</Link>
               </div>
             )}
           </div>
